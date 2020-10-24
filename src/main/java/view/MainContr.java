@@ -15,6 +15,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Pair;
+import model.AI;
 import model.Board;
 import model.Colors;
 
@@ -29,6 +30,7 @@ public class MainContr {
     private static final Text turn = new Text(800, 400, "Turn: ");
     private static final Text currentPlayer = new Text(900, 400, "");
     private static final Text winner = new Text(800, 500, "");
+    private static final AI ai = new AI();
     private static int i = 0;
     private static GridPane viewOfBoard = new GridPane();
     private static Canvas[][] saveCanvas = new Canvas[8][8];
@@ -45,6 +47,8 @@ public class MainContr {
     }
 
     public void buttonToDo (ActionEvent event) {
+        ai.setColorAI(Colors.White);
+        ai.setColorUser(Colors.Black);
         board1 = new Board();
         white.setFont(Font.font(30.0));
         black.setFont(Font.font(30.0));
@@ -74,7 +78,7 @@ public class MainContr {
     private static void drawBoard() {
         double x = 0.0;
         double y = 0.0;
-        checking();
+        //checking();
         for (int i = 0; i<=7; i++) {
             for(int j = 0; j<=7; j++) {
                 GraphicsContext first = saveCanvas[i][j].getGraphicsContext2D();
@@ -124,7 +128,7 @@ public class MainContr {
                     }
                     drawBoard();
                     canBePut.clear();
-                    i += 1;
+                    i++;
                     checking();
                     canBePut = board1.whereToStand(color);
                     if (canBePut.isEmpty()) {
@@ -136,7 +140,7 @@ public class MainContr {
                     drawBoard();
                 }
             } else {
-                i += 1;
+                i++;
                 checking();
                 canBePut = board1.whereToStand(color);
                 board1.whereToStandPut(canBePut);
@@ -149,7 +153,19 @@ public class MainContr {
         if (i % 2 == 0) {
             color = Colors.Black;
         }else{
-            color = Colors.White;
+            ai.act(board1);
+            drawBoard();
+            i++;
+            checking();
+            if (board1.getCountBlack() + board1.getCountWhite() == 64) {
+                if (board1.getCountBlack() > board1.getCountWhite()) {
+                    winner.setText("Winner is Black");
+                } else if (board1.getCountWhite() > board1.getCountBlack()) {
+                    winner.setText("Winner is White");
+                } else {
+                    winner.setText("We are the champions");
+                }
+            }
         }
     }
 }
