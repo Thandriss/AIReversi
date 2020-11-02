@@ -78,7 +78,6 @@ public class MainContr {
     private static void drawBoard() {
         double x = 0.0;
         double y = 0.0;
-        //checking();
         for (int i = 0; i<=7; i++) {
             for(int j = 0; j<=7; j++) {
                 GraphicsContext first = saveCanvas[i][j].getGraphicsContext2D();
@@ -117,25 +116,17 @@ public class MainContr {
                 if (board1.putTheChip(x, y, color, canBePut)) {
                     board1.changeColor(x, y, color);
                     board1.deleteCanPut(canBePut);
-                    if (board1.getCountBlack() + board1.getCountWhite() == 64) {
-                        if (board1.getCountBlack() > board1.getCountWhite()) {
-                            winner.setText("Winner is Black");
-                        } else if (board1.getCountWhite() > board1.getCountBlack()) {
-                            winner.setText("Winner is White");
-                        } else {
-                            winner.setText("We are the champions");
-                        }
-                    }
+                    stopGame();
                     drawBoard();
                     canBePut.clear();
                     i++;
                     checking();
                     canBePut = board1.whereToStand(color);
-                    if (canBePut.isEmpty()) {
-                        i += 1;
+                    /*if (canBePut.isEmpty()) {
+                        i++;
                         checking();
                         canBePut = board1.whereToStand(color);
-                    }
+                    }*/
                     board1.whereToStandPut(canBePut);
                     drawBoard();
                 }
@@ -149,23 +140,28 @@ public class MainContr {
         }
     };
 
+    private static void stopGame() {
+        if (board1.getCountBlack() + board1.getCountWhite() == 64) {
+            if (board1.getCountBlack() > board1.getCountWhite()) {
+                winner.setText("Winner is Black");
+            } else if (board1.getCountWhite() > board1.getCountBlack()) {
+                winner.setText("Winner is White");
+            } else {
+                winner.setText("We are the champions");
+            }
+        }
+    }
     private static void checking () {
         if (i % 2 == 0) {
             color = Colors.Black;
         }else{
-            ai.act(board1);
-            drawBoard();
+            do {
+                ai.act(board1);
+                drawBoard();
+                stopGame();
+            } while (board1.whereToStand(Colors.Black).size() == 0 && board1.getCountBlack() + board1.getCountWhite() < 64);
             i++;
             checking();
-            if (board1.getCountBlack() + board1.getCountWhite() == 64) {
-                if (board1.getCountBlack() > board1.getCountWhite()) {
-                    winner.setText("Winner is Black");
-                } else if (board1.getCountWhite() > board1.getCountBlack()) {
-                    winner.setText("Winner is White");
-                } else {
-                    winner.setText("We are the champions");
-                }
-            }
         }
     }
 }

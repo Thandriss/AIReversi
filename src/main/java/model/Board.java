@@ -23,6 +23,14 @@ public class Board implements Serializable {
         }
     };
 
+    public void setCountBlack(Integer countBlack) {
+        this.countBlack = countBlack;
+    }
+
+    public void setCountWhite(Integer countWhite) {
+        this.countWhite = countWhite;
+    }
+
     public Integer getCountBlack() {
         return countBlack;
     }
