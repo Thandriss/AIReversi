@@ -8,6 +8,8 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
@@ -23,8 +25,8 @@ import java.util.List;
 
 public class MainContr {
     private static Board board1;
-    private static final Text white = new Text(800, 200, "White: ");
-    private static final  Text black = new Text(800, 600, "Black: ");
+    private static final Text White = new Text(800, 200, "White: ");
+    private static final  Text Black = new Text(800, 600, "Black: ");
     private static final Text scoreBlack = new Text(900, 600, "");
     private static final Text scoreWhite = new Text(900, 200, "");
     private static final Text turn = new Text(800, 400, "Turn: ");
@@ -42,22 +44,47 @@ public class MainContr {
     @FXML
     private Button startGame;
 
+    @FXML
+    public RadioButton white;
+
+    @FXML
+    public RadioButton black;
+
+    private void setColor (RadioButton white, RadioButton black) {
+        ToggleGroup together = new ToggleGroup();
+        white.setToggleGroup(together);
+        black.setToggleGroup(together);
+        RadioButton selected = (RadioButton) together.getSelectedToggle();
+        String choise = selected.getText();
+        if (choise.equals("Black")){
+            ai.setColorAI(Colors.White);
+            ai.setColorUser(Colors.Black);
+            color = Colors.Black;
+        } else if (choise.equals("White")) {
+            ai.setColorAI(Colors.Black);
+            ai.setColorUser(Colors.White);
+            color = Colors.White;
+        }
+    }
+
     public void setStage(Stage stage) {
         this.stage = stage;
     }
 
     public void buttonToDo (ActionEvent event) {
-        ai.setColorAI(Colors.White);
-        ai.setColorUser(Colors.Black);
+        setColor(white, black);
         board1 = new Board();
-        white.setFont(Font.font(30.0));
-        black.setFont(Font.font(30.0));
+        if (ai.getComp() == Colors.Black) {
+            ai.act(board1);
+        }
+        White.setFont(Font.font(30.0));
+        Black.setFont(Font.font(30.0));
         turn.setFont(Font.font(30.0));
         scoreWhite.setFont(Font.font(30.0));
         scoreBlack.setFont(Font.font(30.0));
         currentPlayer.setFont(Font.font(30.0));
         winner.setFont(Font.font(30.0));
-        Group rootWind = new Group(white, black, scoreBlack, scoreWhite, turn, currentPlayer, viewOfBoard, winner);
+        Group rootWind = new Group(White, Black, scoreBlack, scoreWhite, turn, currentPlayer, viewOfBoard, winner);
         fullCanvasForView();
         canBePut = board1.whereToStand(color);
         board1.whereToStandPut(canBePut);
@@ -66,6 +93,7 @@ public class MainContr {
         sceneOfGame.setOnMouseClicked(mouseHandler);
         stage.setScene(sceneOfGame);
     }
+
     private static void fullCanvasForView() {
         for (int i = 0; i <=7; i++){
             for (int j = 0; j <=7; j++) {
@@ -122,11 +150,6 @@ public class MainContr {
                     i++;
                     checking();
                     canBePut = board1.whereToStand(color);
-                    /*if (canBePut.isEmpty()) {
-                        i++;
-                        checking();
-                        canBePut = board1.whereToStand(color);
-                    }*/
                     board1.whereToStandPut(canBePut);
                     drawBoard();
                 }
@@ -153,7 +176,6 @@ public class MainContr {
     }
     private static void checking () {
         if (i % 2 == 0) {
-            color = Colors.Black;
         }else{
             do {
                 ai.act(board1);

@@ -12,10 +12,10 @@ import java.io.InputStream;
 public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception{
-        InputStream iconStream = getClass().getResourceAsStream("/img/icon.png");
+        InputStream iconStream = getClass().getResourceAsStream("/img/icon2.png");
         Image image = new Image(iconStream);
         primaryStage.getIcons().add(image);
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/startWindow.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/startMenu.fxml"));
         Parent root = loader.load();
         primaryStage.setResizable(false);
         Scene sceneOfGame = new Scene(root, 1280, 800);

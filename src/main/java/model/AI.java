@@ -15,6 +15,10 @@ public class AI {
     private final boolean compTurn = true;
     private List<Board> toSave = new ArrayList<Board>();
 
+    public Colors getComp() {
+        return comp;
+    }
+
     public void setColorAI(Colors color) {
         this.comp = color;
     }
@@ -35,20 +39,45 @@ public class AI {
     }
 
     private Integer valueOfComp(Board field) {
+        Integer ret = 0;
+        Integer OX = 0;
+        Integer OY = 0;
+        while (OX != 8 && OY != 8) {
+            if (field.valueAt(OX, OY) == comp) {
+                ret++;
+            }
+            OX++;
+            OY++;
+        }
+        if (field.valueAt(0,0) == comp) { ret += 2;}
+        if (field.valueAt(7,0) == comp) { ret += 2;}
+        if (field.valueAt(0,7) == comp) { ret += 2;}
+        if (field.valueAt(7,7) == comp) { ret += 2;}
+        OX = 7;
+        OY = 0;
+        while (OX != -1 && OY != 8) {
+            if (field.valueAt(OX, OY) == comp) {
+                ret++;
+            }
+            OX--;
+            OY++;
+        }
+        if (toSave.size() > 1)toSave.remove(toSave.size() - 1);
         if (comp == Colors.Black) {
-            toSave.remove(toSave.size() - 1);
-            return field.getCountBlack();
+            ret += field.getCountBlack();
+            return ret;
         }
         else {
-            toSave.remove(toSave.size() - 1);
-            return field.getCountWhite();
+            ret += field.getCountWhite();
+            return ret;
         }
     }
+
     private Integer minimax(Board field, boolean isMaxOrMin, int depth) {
         Integer bestScore;
         toSave.add(doAClone(field));
         Board board = doAClone(field);
-        if (depth != 3 || board.getCountWhite() + board.getCountBlack() >= 64) {
+        if (depth != 6 || board.getCountWhite() + board.getCountBlack() == 64) {
             if (isMaxOrMin) {
                 List<Pair<Integer, Integer>> toStand = board.whereToStand(comp);
                 //выбираем ход, который нам выгодней
@@ -103,9 +132,9 @@ public class AI {
             }
             toSave.clear();
         }
-        System.out.println(compMove);
         return compMove;
     }
+
     public void act (Board board) {
         Pair<Integer, Integer> whereToPut = getPosition(board);
         if (!flagNoWhereToStand && board.getCountWhite() + board.getCountBlack() != 64 && board.valueAt(whereToPut.getKey(), whereToPut.getValue()) != user) {
@@ -114,4 +143,5 @@ public class AI {
         }
         flagNoWhereToStand = false;
     }
+
 }
